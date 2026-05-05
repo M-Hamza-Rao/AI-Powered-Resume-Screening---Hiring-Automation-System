@@ -50,7 +50,7 @@ Return ONLY valid JSON in this exact format (no extra text):
             return response.choices[0].message.content
 
         except AuthenticationError:
-            return "Error: Invalid or expired OpenAI API key."
+            return "Error: Invalid or No OpenAI API key; add key or try Groq."
 
         except Exception as e:
             return f"Error: OpenAI request failed - {str(e)}"
@@ -58,7 +58,7 @@ Return ONLY valid JSON in this exact format (no extra text):
     elif mode == "groq":
         api_key = get_key("GROQ_API_KEY")
         if not api_key:
-            return "Error: GROQ_API_KEY not found."
+            return "Error: Invalid or No Groq API key; add key or try OpenAI."
 
         client = Groq(api_key=api_key)
 
