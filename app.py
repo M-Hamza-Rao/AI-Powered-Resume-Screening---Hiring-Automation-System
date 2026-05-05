@@ -63,21 +63,5 @@ if st.button("Analyze"):
             except:
                 st.error("Invalid response from model")
 
-        # Display
-        st.subheader("Match Score")
-        st.write(structured["score"])
-
-        st.subheader("Strengths")
-        for s in structured["strengths"]:
-            st.write("- " + s)
-
-        st.subheader("Missing Skills")
-        for m in structured["missing_skills"]:
-            st.write("- " + m)
-
-        st.subheader("Suggestions")
-        for s in structured["suggestions"]:
-            st.write("- " + s)
-
     else:
         st.warning("Please upload CV and enter job description")
