@@ -8,3 +8,4 @@ langchain-text-splitters
 openai
 groq
 python-dotenv
+protobuf==3.20.3
