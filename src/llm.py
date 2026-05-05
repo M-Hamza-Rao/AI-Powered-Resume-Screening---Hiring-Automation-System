@@ -1,8 +1,13 @@
 from groq import Groq
 import os
+import streamlit as st
 from dotenv import load_dotenv
 
 load_dotenv()
+
+def get_key(name):
+    return os.getenv(name) or st.secrets.get(name)
+
 
 def evaluate_cv(job_description, retrieved_chunks, mode="groq"):
     context = "\n\n".join(retrieved_chunks[0])
@@ -30,7 +35,12 @@ Return ONLY valid JSON in this exact format (no extra text):
 
     if mode == "openai":
         from openai import OpenAI
-        client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+        api_key = get_key("OPENAI_API_KEY")
+        if not api_key:
+            return "Error: OPENAI_API_KEY not found."
+
+        client = OpenAI(api_key=api_key)
 
         response = client.chat.completions.create(
             model="gpt-4o-mini",
@@ -40,7 +50,11 @@ Return ONLY valid JSON in this exact format (no extra text):
         return response.choices[0].message.content
 
     elif mode == "groq":
-        client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+        api_key = get_key("GROQ_API_KEY")
+        if not api_key:
+            return "Error: GROQ_API_KEY not found."
+
+        client = Groq(api_key=api_key)
 
         response = client.chat.completions.create(
             model="llama-3.1-8b-instant",
@@ -50,4 +64,4 @@ Return ONLY valid JSON in this exact format (no extra text):
         return response.choices[0].message.content
 
     else:
-        raise ValueError("Invalid mode")
+        return "Error: Invalid mode"
