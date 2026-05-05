@@ -34,7 +34,7 @@ Return ONLY valid JSON in this exact format (no extra text):
 """
 
     if mode == "openai":
-        from openai import OpenAI
+        from openai import OpenAI, AuthenticationError
 
         api_key = get_key("OPENAI_API_KEY")
         if not api_key:
@@ -42,12 +42,18 @@ Return ONLY valid JSON in this exact format (no extra text):
 
         client = OpenAI(api_key=api_key)
 
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}]
-        )
+        try:
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}]
+            )
+            return response.choices[0].message.content
 
-        return response.choices[0].message.content
+        except AuthenticationError:
+            return "Error: Invalid or expired OpenAI API key."
+
+        except Exception as e:
+            return f"Error: OpenAI request failed - {str(e)}"
 
     elif mode == "groq":
         api_key = get_key("GROQ_API_KEY")
