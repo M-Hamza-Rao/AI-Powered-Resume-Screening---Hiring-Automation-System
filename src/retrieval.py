@@ -1,14 +1,15 @@
 import chromadb
 from chromadb.config import Settings
 
-# initialize database
 client = chromadb.Client(Settings())
 collection = client.get_or_create_collection(name="cv_data")
 
 
 def store_embeddings(chunks, embeddings):
-    # clear previous data (important for Streamlit reruns)
-    collection.delete(where={})
+    # delete existing data safely
+    existing = collection.get()
+    if existing["ids"]:
+        collection.delete(ids=existing["ids"])
 
     for i, (chunk, embedding) in enumerate(zip(chunks, embeddings)):
         collection.add(
