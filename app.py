@@ -39,7 +39,29 @@ if st.button("Analyze"):
         evaluation = evaluate_cv(job_description, results, mode=mode)
 
         # Convert JSON string → dict
-        structured = json.loads(evaluation)
+        if evaluation.startswith("Error"):
+            st.error(evaluation)
+        else:
+            try:
+                structured = json.loads(evaluation)
+        
+                st.subheader("Match Score")
+                st.write(structured["score"])
+        
+                st.subheader("Strengths")
+                for s in structured["strengths"]:
+                    st.write("- " + s)
+        
+                st.subheader("Missing Skills")
+                for m in structured["missing_skills"]:
+                    st.write("- " + m)
+        
+                st.subheader("Suggestions")
+                for s in structured["suggestions"]:
+                    st.write("- " + s)
+        
+            except:
+                st.error("Invalid response from model")
 
         # Display
         st.subheader("Match Score")
